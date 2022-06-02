@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom'
 import React from 'react'
 import { useTheme } from '@mui/styles'
 import { Divider, List, ListItem, ListItemText, ListSubheader, ListItemIcon, Box, CircularProgress } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
+import genreIcons from '../../assets/genres'
+import { useGetGenresQuery } from '../../services/TMDB';
+import { selectGenreOrCategory } from '../../features/currentGenreOrCategory'
 
 const redLogo = 'https://fontmeme.com/permalink/210930/8531c658a743debe1e1aa1a2fc82006e.png';
 
@@ -49,8 +53,12 @@ const categories = [
 ]
 
 function Sidebar() {
+  const { data, error, isFetching } = useGetGenresQuery();
     const theme = useTheme();
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory)
+
     return (
       <div>
         <Link to="/" className={classes.imageLink}>
@@ -61,10 +69,10 @@ function Sidebar() {
           <ListSubheader>Categories</ListSubheader>
           {categories.map(({ label, value }) => (
             <Link key={value} className={classes.links} to="/">
-              <ListItem onClick={() => {}} button>
-                {/* <ListItemIcon>
-                  <img src={redLogo} alt="logoooo" className={classes.genreImages} height={30} />
-                </ListItemIcon> */}
+              <ListItem onClick={() => dispatch(selectGenreOrCategory(value))} button>
+                <ListItemIcon>
+                  <img src={genreIcons[label.toLowerCase()]} alt="logoooo" className={classes.genreImages} height={30} />
+                </ListItemIcon>
                 <ListItemText primary={label} />
               </ListItem>
             </Link>
@@ -75,16 +83,20 @@ function Sidebar() {
 
         <List>
           <ListSubheader>Genres</ListSubheader>
-          {mockCategories.map(({ label, value }) => (
-            <Link key={value} className={classes.links} to="/">
-              <ListItem onClick={() => {}} button>
-                {/* <ListItemIcon>
-                  <img src={redLogo} alt="logoooo" className={classes.genreImages} height={30} />
-                </ListItemIcon> */}
-                <ListItemText primary={label} />
-              </ListItem>
-            </Link>
-          ))}
+          { isFetching ? (
+            <Box display="flex" justifyContent="center">
+              <CircularProgress size="4rem" />
+            </Box>
+) : (data?.genres.map(({ name, id }) => (
+  <Link key={id} className={classes.links} to="/">
+    <ListItem onClick={() => dispatch(selectGenreOrCategory(id))} button>
+      <ListItemIcon>
+        <img src={genreIcons[name.toLowerCase()]} alt="logoooo" className={classes.genreImages} height={30} />
+      </ListItemIcon>
+      <ListItemText primary={name} />
+    </ListItem>
+  </Link>
+          )))}
         </List>
       </div>
     )

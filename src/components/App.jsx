@@ -19,11 +19,9 @@ function App() {
         <div className={classes.toolbar} />
         <Switch>
           <Route path="/" exact>
-            <h1>Home</h1>
-          </Route>
-          <Route path="/movies" exact>
             <Movies />
           </Route>
+
           <Route path="/movies/:id" exact>
             <MovieInformation />
           </Route>

@@ -7,7 +7,8 @@ import { Menu, AccountCircle, Brightness4, Brightness7 } from '@mui/icons-materi
 import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles';
 import useStyles from './styles';
-import Sidebar from '../Sidebar/Sidebar';
+import { Sidebar, Search } from '..'
+import { fetchToken } from '../../utils';
 
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -27,10 +28,10 @@ function Navbar() {
             <IconButton color="inherit" sx={{ ml: 1 }} onClick={() => {}}>
               {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
-            {!isMobile && 'Search...'}
+            {!isMobile && <Search />}
             <div>
               {!isAuthenticated ? (
-                <Button color="inherit" onClick={() => {}}>
+                <Button color="inherit" onClick={fetchToken}>
                   Login &nbsp; <AccountCircle />
                 </Button>
                 ) : (
@@ -40,7 +41,7 @@ function Navbar() {
                   </Button>
                 )}
             </div>
-            {isMobile && 'Search...'}
+            {isMobile && <Search />}
           </Toolbar>
         </AppBar>
 

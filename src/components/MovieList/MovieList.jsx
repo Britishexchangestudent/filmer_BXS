@@ -7,11 +7,11 @@ import React from 'react'
 import Movie from '../Movie/Movie';
  import useStyles from './styles'
 
-function MovieList({ movies }) {
+function MovieList({ movies, numberOfMovies }) {
     const classes = useStyles();
     return (
       <Grid container className={classes.movieContainer}>
-        {movies?.results?.map((movie, index) => (
+        {movies?.results?.slice(0, numberOfMovies)?.map((movie, index) => (
           <Movie key={index} movie={movie} i={index} />
         ))}
       </Grid>

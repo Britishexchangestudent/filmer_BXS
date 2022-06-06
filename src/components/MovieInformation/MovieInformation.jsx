@@ -3,21 +3,24 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable no-unused-vars */
 import { Button, Modal, Typography, ButtonGroup, Grid, Box, CircularProgress, useMediaQuery, Rating, Tooltip } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import genreIcons from '../../assets/genres'
-import { useGetMovieQuery } from '../../services/TMDB'
+import { useGetMovieQuery, useGetRecommendedQuery } from '../../services/TMDB'
 import useStyles from './styles'
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory'
+import MovieList from '../MovieList/MovieList'
 
 function MovieInformation() {
   const { id } = useParams()
   const { data, isFetching, error } = useGetMovieQuery(id)
+  const { data: recommendations, isFetching: isRecommendedFetching } = useGetRecommendedQuery({ list: '/recommendations', movie_id: id })
   const classes = useStyles()
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
   const isMovieFavourite = true;
   const isMovieWatchlist = true;
 
@@ -29,8 +32,6 @@ function MovieInformation() {
   }
 
   const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory)
-
-  console.log('data', data)
 
   if (isFetching) {
     return (
@@ -119,7 +120,7 @@ function MovieInformation() {
                   <Button target="_blank" rel="noopener norefferer" href={`https://www.imdb.com/title/${data?.imdb_id}`} endIcon={<MovieIcon />}>
                     IMDB
                   </Button>
-                  <Button onClick={() => {}} target="_blank" rel="noopener norefferer" href="#" endIcon={<Theaters />}>
+                  <Button onClick={() => setOpen(true)} target="_blank" rel="noopener norefferer" endIcon={<Theaters />}>
                     Trailer
                   </Button>
                 </ButtonGroup>
@@ -142,6 +143,26 @@ function MovieInformation() {
             </div>
           </Grid>
         </Grid>
+
+        {/* Recommended */}
+        <Box marginTop="5rem" width="100%">
+          <Typography variant="h3" gutterBottom align="center">
+            You might also like
+          </Typography>
+          {recommendations ? <MovieList movies={recommendations} numberOfMovies={12} /> : <Box>Sorry, nothing was found</Box>}
+        </Box>
+        <Modal closeAfterTransition className={classes.modal} open={open} onClose={() => setOpen(false)}>
+          {data?.videos?.results?.length > 0 && (
+          <iframe
+            autoPlay
+            className={classes.video}
+            frameBorder="0"
+            title="Trailer"
+            src={`https://www.youtube.com/embed/${data?.videos?.results[0].key}`}
+            allow="autoplay"
+          />
+              )}
+        </Modal>
       </Grid>
     )
 }

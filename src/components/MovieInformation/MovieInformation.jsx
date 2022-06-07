@@ -51,7 +51,7 @@ function MovieInformation() {
 
     return (
       <Grid container className={classes.containerSpaceAround}>
-        <Grid item sm={12} lg={4}>
+        <Grid item sm={12} lg={4} styles={{ display: 'flex', marginBottom: '30px' }}>
           <img src={`https://image.tmdb.org/t/p/w500/${data?.poster_path}`} alt={data?.title} className={classes.poster} />
         </Grid>
         <Grid item container direction="column" lg={7}>
@@ -72,13 +72,13 @@ function MovieInformation() {
             </Box>
 
             <Typography variant="h6" align="center" gutterBottom>
-              {data?.runtime}min {data?.spoken_languages.length > 0 ? `/ ${data?.spoken_languages[0].name}` : ''}
+              {data?.runtime}min {`| Language: ${data?.spoken_languages[0]?.name}`}
             </Typography>
           </Grid>
           <Grid item className={classes.genresContainer}>
             {data?.genres?.map((genre, i) => (
               <Link key={i} className={classes.links} style={{ textDecoration: 'none' }} to="/" onClick={() => dispatch(selectGenreOrCategory(genre?.id))}>
-                <img src={genreIcons[genre.name.toLowerCase()]} alt="logoooo" className={classes.genreImage} height={30} />
+                <img src={genreIcons[genre?.name?.toLowerCase()]} alt="logoooo" className={classes.genreImage} height={30} />
                 <Typography color="textPrimary" variant="subtitle1" style={{ textDecoration: 'none' }}>
                   {genre?.name}
                 </Typography>
@@ -101,7 +101,7 @@ function MovieInformation() {
             {data && data.credits.cast.map((character, i) => (
               character.profile_path && (
               <Grid key={i} item xs={4} md={2} component={Link} to={`/actors/${character.id}`} style={{ textDecoration: 'none' }}>
-                <img src={`https://image.tmdb.org/t/p/w500/${character.profile_path}`} className={classes.castImage} alt={character.name} />
+                <img src={`https://image.tmdb.org/t/p/w500/${character?.profile_path}`} className={classes.castImage} alt={character?.name} />
                 <Typography color="textPrimary">{character?.name}</Typography>
                 <Typography color="textSecondary">{character?.character.split('/')[0]}</Typography>
               </Grid>

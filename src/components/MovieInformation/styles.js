@@ -23,7 +23,7 @@ export default makeStyles((theme) => ({
        [theme.breakpoints.down('sm')]: {
         margin: '0 auto',
         width: '100%',
-        height: '350px',
+        height: '450px',
         marginBottom: '30px',
     },
    },

@@ -15,6 +15,7 @@ function Search() {
     const classes = useStyles()
     const [query, setQuery] = useState('');
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -24,6 +25,8 @@ function Search() {
     const clear = () => {
         setQuery('')
     }
+
+    if (location.pathname !== '/') return null;
 
     return (
       <div className={classes.searchContainer}>

@@ -2,12 +2,11 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable no-unused-vars */
-import { Button, Modal, Typography, ButtonGroup, Grid, Box, CircularProgress, useMediaQuery, Rating, Tooltip } from '@mui/material'
+import { Button, Modal, Typography, ButtonGroup, Grid, Box, CircularProgress, Rating } from '@mui/material'
 import React, { useState } from 'react'
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
 import genreIcons from '../../assets/genres'
 import { useGetMovieQuery, useGetRecommendedQuery } from '../../services/TMDB'
 import useStyles from './styles'

@@ -1,5 +1,6 @@
+/* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
-import React from 'react';
+import React, { useRef } from 'react';
 import { CssBaseline } from '@mui/material';
 import { Route, Switch } from 'react-router-dom';
 import { Actors, Movies, MovieInformation, Profile, Navbar } from './index';
@@ -7,9 +8,13 @@ import { Actors, Movies, MovieInformation, Profile, Navbar } from './index';
 // eslint-disable-next-line import/no-named-as-default
 // eslint-disable-next-line import/no-named-as-default-member
 import useStyles from './styles';
+import useAlan from './Alan';
 
 function App() {
   const classes = useStyles();
+  const alanBtnContainer = useRef();
+
+  useAlan()
 
   return (
     <div className={classes.root}>
@@ -33,6 +38,7 @@ function App() {
           </Route>
         </Switch>
       </main>
+      <div ref={alanBtnContainer} />
     </div>
   );
 }

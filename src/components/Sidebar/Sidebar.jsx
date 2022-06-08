@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTheme } from '@mui/styles'
 import { Divider, List, ListItem, ListItemText, ListSubheader, ListItemIcon, Box, CircularProgress } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,12 +52,16 @@ const categories = [
     },
 ]
 
-function Sidebar() {
+function Sidebar({ setMobileOpen }) {
   const { data, error, isFetching } = useGetGenresQuery();
     const theme = useTheme();
     const classes = useStyles();
     const dispatch = useDispatch();
     const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory)
+
+    useEffect(() => {
+      setMobileOpen(false)
+    }, [genreIdOrCategoryName])
 
     return (
       <div>

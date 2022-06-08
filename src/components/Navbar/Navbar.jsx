@@ -65,7 +65,7 @@ function Navbar() {
                 ) : (
                   <Button color="inherit" onClick={() => {}} component={Link} to={`/profile/${user.id}`} className={classes.linkButton}>
                     {!isMobile && <>My Movies &nbsp;</>}
-                    <Avatar style={{ width: 30, height: 30 }} alt="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHUndSzxcF1UbSXX3bVILVaUbSIhoc_GEA8g&usqp=CAU" />
+                    <Avatar style={{ width: 30, height: 30 }} alt="profile" src={`https://www.themoviedb.org/t/p/w64_and_h64_face${user?.avatar?.tmdb?.avatar_path}`} />
                   </Button>
                 )}
             </div>

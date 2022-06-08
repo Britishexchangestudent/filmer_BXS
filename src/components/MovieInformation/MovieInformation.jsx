@@ -3,31 +3,56 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable no-unused-vars */
 import { Button, Modal, Typography, ButtonGroup, Grid, Box, CircularProgress, Rating } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
 import genreIcons from '../../assets/genres'
-import { useGetMovieQuery, useGetRecommendedQuery } from '../../services/TMDB'
+import { useGetListQuery, useGetMovieQuery, useGetRecommendedQuery } from '../../services/TMDB'
 import useStyles from './styles'
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory'
 import MovieList from '../MovieList/MovieList'
 
 function MovieInformation() {
   const { id } = useParams()
+  const { user } = useSelector((state) => state.user)
   const { data, isFetching, error } = useGetMovieQuery(id)
+  const { data: favoriteMovies, isFetching: isFavoriteFetching } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: localStorage.getItem('session_id'), page: 1 })
+  const { data: watchlistMovies, isFetching: isWatchlistFetching } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: localStorage.getItem('session_id'), page: 1 })
   const { data: recommendations, isFetching: isRecommendedFetching } = useGetRecommendedQuery({ list: '/recommendations', movie_id: id })
   const classes = useStyles()
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const isMovieFavourite = true;
-  const isMovieWatchlist = true;
 
-  const addToFavourite = () => {
+  const [isMovieFavorited, setIsMovieFavorited] = useState(false);
 
+  const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
+
+  useEffect(() => {
+    setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie?.id === data?.id))
+  }, [favoriteMovies, data])
+  useEffect(() => {
+    setIsMovieWatchlisted(!!watchlistMovies?.results?.find((movie) => movie?.id === data?.id))
+  }, [watchlistMovies, data])
+
+  const addToFavourite = async () => {
+    await axios.post(`https://api.themoviedb.org/3/account/${user.id}/favorite?api_key=${process.env.REACT_APP_TMDB_KEY}&session_id=${localStorage.getItem('session_id')}`, {
+      media_type: 'movie',
+      media_id: id,
+      favorite: !isMovieFavorited,
+    })
+
+    setIsMovieFavorited((prev) => !prev)
   }
-  const addToWatchlist = () => {
+  const addToWatchlist = async () => {
+    await axios.post(`https://api.themoviedb.org/3/account/${user.id}/watchlist?api_key=${process.env.REACT_APP_TMDB_KEY}&session_id=${localStorage.getItem('session_id')}`, {
+      media_type: 'movie',
+      media_id: id,
+      watchlist: !isMovieWatchlisted,
+    })
 
+    setIsMovieWatchlisted((prev) => !prev)
   }
 
   const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory)
@@ -126,10 +151,10 @@ function MovieInformation() {
               </Grid>
               <Grid item xs={12} sm={6} className={classes.buttonsContainer}>
                 <ButtonGroup size="medium" varaint="outlined">
-                  <Button onClick={addToFavourite} endIcon={isMovieFavourite ? <FavoriteBorderOutlined /> : <Favorite />}>
-                    {isMovieFavourite ? 'UnFavourite' : 'Favourite'}
+                  <Button onClick={addToFavourite} endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}>
+                    {isMovieFavorited ? 'UnFavourite' : 'Favourite'}
                   </Button>
-                  <Button onClick={addToWatchlist} endIcon={isMovieWatchlist ? <Remove /> : <PlusOne />}>
+                  <Button onClick={addToWatchlist} endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}>
                     Watchlist
                   </Button>
                   <Button endIcon={<ArrowBack />} sx={{ borderColor: 'primary.main' }}>

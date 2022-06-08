@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable no-unused-vars */
 import { Button, IconButton, Toolbar, Avatar, Drawer, AppBar, useMediaQuery } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Menu, AccountCircle, Brightness4, Brightness7 } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles';
@@ -11,6 +11,7 @@ import useStyles from './styles';
 import { Sidebar, Search } from '..'
 import { fetchToken, createSessionId, moviesApi } from '../../utils';
 import { setUser, userSelector } from '../../features/auth';
+import { ColorModeContext } from '../../utils/ToggleColorMode';
 
 function Navbar() {
   const { isAuthenticated, user } = useSelector((state) => state.user)
@@ -18,6 +19,8 @@ function Navbar() {
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:600px)');
   const theme = useTheme()
+
+  const colorMode = useContext(ColorModeContext)
 
   const dispatch = useDispatch()
 
@@ -50,7 +53,7 @@ function Navbar() {
                 <Menu />
               </IconButton>
             )}
-            <IconButton color="inherit" sx={{ ml: 1 }} onClick={() => {}}>
+            <IconButton color="inherit" sx={{ ml: 1 }} onClick={colorMode.toggleColorMode}>
               {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
             {!isMobile && <Search />}
